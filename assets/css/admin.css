@@ -1,0 +1,32 @@
+/**
+ * Woo Order Doctor admin styles.
+ *
+ * Small layout tweaks layered on top of bundled Bootstrap. Scoped to the
+ * plugin's own pages (assets are only enqueued there).
+ */
+
+/* Give the Bootstrap container a little breathing room from the WP menu. */
+.wod-wrap {
+	margin-right: 20px;
+}
+
+/* Keep the inline status-change forms from stacking; they sit in a flex row. */
+.wod-actions .wod-inline-form {
+	display: inline-block;
+	margin: 0;
+}
+
+/* Tighten button spacing inside the actions cell. */
+.wod-actions .btn {
+	margin-bottom: 2px;
+}
+
+/* WordPress resets can shrink Bootstrap form controls; restore readability. */
+.wod-wrap .form-text {
+	font-size: 12px;
+}
+
+/* Make cards visually distinct against the grey wp-admin background. */
+.wod-wrap .card {
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
