@@ -2,7 +2,7 @@
 /**
  * Database helper.
  *
- * @package Woo_Order_Doctor
+ * @package Order_Health_Doctor
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Woo_Order_Doctor_DB
+ * Class Order_Health_Doctor_DB
  *
  * Owns everything related to the plugin's custom issues table: its name and
  * its schema creation via dbDelta. Keeping this in one place makes the table
  * definition easy to review and maintain.
  */
-class Woo_Order_Doctor_DB {
+class Order_Health_Doctor_DB {
 
 	/**
 	 * Return the fully-prefixed custom table name.
@@ -25,13 +25,13 @@ class Woo_Order_Doctor_DB {
 	 */
 	public static function table_name() {
 		global $wpdb;
-		return $wpdb->prefix . 'woo_order_doctor_issues';
+		return $wpdb->prefix . 'order_health_doctor_issues';
 	}
 
 	/**
 	 * Create (or upgrade) the custom issues table using dbDelta.
 	 *
-	 * dbDelta compares the desired schema against the existing one and applies
+	 * The dbDelta function compares the desired schema against the existing one and applies
 	 * the difference, so this method is safe to run on every activation.
 	 */
 	public static function create_table() {
@@ -65,8 +65,10 @@ class Woo_Order_Doctor_DB {
 			KEY issue_type (issue_type),
 			KEY severity (severity),
 			KEY status (status),
+			KEY status_severity_detected (status, severity, detected_at),
 			KEY object_type (object_type),
 			KEY object_id (object_id),
+			KEY object_lookup (object_type, object_id, status),
 			KEY detected_at (detected_at)
 		) {$charset_collate};";
 
@@ -77,19 +79,19 @@ class Woo_Order_Doctor_DB {
 	/**
 	 * Upgrade the schema when the stored DB version differs from the plugin's.
 	 *
-	 * dbDelta is safe to run repeatedly and will ALTER the existing table to add
+	 * The dbDelta function is safe to run repeatedly and will ALTER the existing table to add
 	 * any new columns (e.g. the email-notification tracking columns) without the
 	 * admin needing to deactivate/reactivate. Cheap to call, but we only run the
 	 * heavier dbDelta when the version actually changed.
 	 */
 	public static function maybe_upgrade() {
-		$installed = get_option( 'wod_db_version' );
+		$installed = get_option( 'ohd_db_version' );
 
-		if ( WOO_ORDER_DOCTOR_VERSION === $installed ) {
+		if ( ORDER_HEALTH_DOCTOR_VERSION === $installed ) {
 			return;
 		}
 
 		self::create_table();
-		update_option( 'wod_db_version', WOO_ORDER_DOCTOR_VERSION );
+		update_option( 'ohd_db_version', ORDER_HEALTH_DOCTOR_VERSION );
 	}
 }
