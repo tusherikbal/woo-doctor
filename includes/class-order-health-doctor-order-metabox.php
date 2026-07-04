@@ -2,7 +2,7 @@
 /**
  * Order edit screen meta box.
  *
- * @package Woo_Order_Doctor
+ * @package Order_Health_Doctor
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Woo_Order_Doctor_Order_Metabox
+ * Class Order_Health_Doctor_Order_Metabox
  *
  * Adds a meta box to the WooCommerce order edit screen that lists any open
- * Woo Order Doctor issues for that order, with severity badges and the same
+ * Order Health Doctor issues for that order, with severity badges and the same
  * action buttons used on the Issues page. Works with both the legacy
  * (post-based) and HPOS (custom table) order screens.
  */
-class Woo_Order_Doctor_Order_Metabox {
+class Order_Health_Doctor_Order_Metabox {
 
 	/**
 	 * Register the meta box hook.
@@ -36,8 +36,8 @@ class Woo_Order_Doctor_Order_Metabox {
 			: 'shop_order';
 
 		add_meta_box(
-			'wod_order_issues',
-			__( 'Woo Order Doctor', 'woo-order-doctor' ),
+			'ohd_order_issues',
+			__( 'Order Health Doctor', 'order-health-doctor' ),
 			array( $this, 'render_meta_box' ),
 			$screen,
 			'side',
@@ -54,16 +54,16 @@ class Woo_Order_Doctor_Order_Metabox {
 		// Resolve the order ID regardless of which object WooCommerce passed in.
 		$order_id = ( $post_or_order instanceof WP_Post ) ? $post_or_order->ID : $post_or_order->get_id();
 
-		$issues = Woo_Order_Doctor_Issue_Repository::get_open_issues_for_object( 'order', $order_id );
+		$issues = Order_Health_Doctor_Issue_Repository::get_open_issues_for_object( 'order', $order_id );
 
 		// The meta box markup uses plain WP admin styles since Bootstrap is not
 		// loaded on the order edit screen.
 		if ( empty( $issues ) ) {
-			echo '<p>' . esc_html__( 'No Woo Order Doctor issues found for this order.', 'woo-order-doctor' ) . '</p>';
+			echo '<p>' . esc_html__( 'No Order Health Doctor issues found for this order.', 'order-health-doctor' ) . '</p>';
 			return;
 		}
 
-		echo '<ul class="wod-metabox-issues">';
+		echo '<ul class="ohd-metabox-issues">';
 		foreach ( $issues as $issue ) {
 			echo '<li style="margin-bottom:12px;">';
 
@@ -75,7 +75,7 @@ class Woo_Order_Doctor_Order_Metabox {
 				'low'      => '#6c757d',
 				'info'     => '#adb5bd',
 			);
-			$color = isset( $colors[ $issue->severity ] ) ? $colors[ $issue->severity ] : '#6c757d';
+			$color  = isset( $colors[ $issue->severity ] ) ? $colors[ $issue->severity ] : '#6c757d';
 			echo '<span style="display:inline-block;padding:2px 6px;border-radius:3px;color:#fff;background:' . esc_attr( $color ) . ';font-size:11px;text-transform:uppercase;">' . esc_html( $issue->severity ) . '</span>';
 
 			echo '<strong style="display:block;margin-top:4px;">' . esc_html( $issue->title ) . '</strong>';
@@ -83,9 +83,9 @@ class Woo_Order_Doctor_Order_Metabox {
 
 			// Status-change buttons as small nonce-protected forms.
 			echo '<div style="margin-top:6px;">';
-			$this->render_metabox_status_button( $issue->id, 'reviewed', __( 'Mark Reviewed', 'woo-order-doctor' ) );
-			$this->render_metabox_status_button( $issue->id, 'resolved', __( 'Resolve', 'woo-order-doctor' ) );
-			$this->render_metabox_status_button( $issue->id, 'ignored', __( 'Ignore', 'woo-order-doctor' ) );
+			$this->render_metabox_status_button( $issue->id, 'reviewed', __( 'Mark Reviewed', 'order-health-doctor' ) );
+			$this->render_metabox_status_button( $issue->id, 'resolved', __( 'Resolve', 'order-health-doctor' ) );
+			$this->render_metabox_status_button( $issue->id, 'ignored', __( 'Ignore', 'order-health-doctor' ) );
 			echo '</div>';
 
 			echo '</li>';
@@ -105,11 +105,11 @@ class Woo_Order_Doctor_Order_Metabox {
 	 */
 	private function render_metabox_status_button( $issue_id, $status, $label ) {
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="display:inline-block;margin-right:4px;">';
-		echo '<input type="hidden" name="action" value="wod_update_issue_status" />';
+		echo '<input type="hidden" name="action" value="ohd_update_issue_status" />';
 		echo '<input type="hidden" name="issue_id" value="' . esc_attr( $issue_id ) . '" />';
 		echo '<input type="hidden" name="new_status" value="' . esc_attr( $status ) . '" />';
-		echo '<input type="hidden" name="redirect_page" value="woo-order-doctor-issues" />';
-		wp_nonce_field( 'wod_update_issue_status' );
+		echo '<input type="hidden" name="redirect_page" value="order-health-doctor-issues" />';
+		wp_nonce_field( 'ohd_update_issue_status' );
 		echo '<button type="submit" class="button button-small">' . esc_html( $label ) . '</button>';
 		echo '</form>';
 	}

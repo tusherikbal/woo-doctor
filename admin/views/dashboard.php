@@ -2,121 +2,136 @@
 /**
  * Dashboard view.
  *
- * Expects the following variables provided by Woo_Order_Doctor_Admin::render_dashboard_page():
+ * Expects the following variables provided by Order_Health_Doctor_Admin::render_dashboard_page():
  *
  * @var array  $counts        Open issue counts by severity.
  * @var int    $health        Health score 0-100.
  * @var string $health_label  Health score label.
  * @var array  $recent_issues Recent open issue rows.
  * @var string $last_scan     Last scan datetime (mysql) or empty.
+ * @var array  $sparkline     Health-score history points ({date,score,total}).
  *
- * @package Woo_Order_Doctor
+ * @package Order_Health_Doctor
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Read a one-off notice from the query string (set after the scan redirect).
-$notice = isset( $_GET['wod_notice'] ) ? sanitize_key( wp_unslash( $_GET['wod_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+// Read a one-off notice from the query string (kept for the no-JS POST fallback).
+$notice = isset( $_GET['ohd_notice'] ) ? sanitize_key( wp_unslash( $_GET['ohd_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 
-// Pick a progress-bar colour band based on the score.
-$score_class = 'bg-danger';
-if ( $health >= 90 ) {
-	$score_class = 'bg-success';
-} elseif ( $health >= 75 ) {
-	$score_class = 'bg-primary';
-} elseif ( $health >= 50 ) {
-	$score_class = 'bg-warning';
+$band_class = Order_Health_Doctor_Admin::health_band_class( $health );
+$band_hex   = Order_Health_Doctor_Admin::health_hex( $health );
+
+// Gauge geometry (SVG ring).
+$radius        = 52;
+$circumference = 2 * M_PI * $radius;
+
+// Build the sparkline point string (scores 0-100 across a 100x30 viewBox).
+$spark_scores = array();
+foreach ( (array) $sparkline as $point ) {
+	$spark_scores[] = (int) $point['score'];
 }
 ?>
-<div class="wrap wod-wrap">
+<div class="wrap ohd-wrap">
 	<div class="container-fluid px-0">
 
-		<h1 class="h3 mb-3"><?php esc_html_e( 'Woo Order Doctor', 'woo-order-doctor' ); ?></h1>
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h1 class="h3 mb-0"><?php esc_html_e( 'Order Health Doctor', 'order-health-doctor' ); ?></h1>
+			<span class="text-muted small">
+				<?php esc_html_e( 'Last scan:', 'order-health-doctor' ); ?>
+				<span id="ohd-last-scan"><?php echo $last_scan ? esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_scan ) ) : esc_html__( 'Never', 'order-health-doctor' ); ?></span>
+			</span>
+		</div>
 
-		<?php if ( 'scan_done' === $notice ) : ?>
-			<div class="alert alert-success" role="alert">
-				<?php
-				$detected = isset( $_GET['wod_detected'] ) ? absint( $_GET['wod_detected'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
-				printf(
-					/* translators: %d: number of issues detected */
-					esc_html__( 'Scan complete. %d issue(s) detected or updated.', 'woo-order-doctor' ),
-					$detected
-				);
-				?>
-			</div>
-		<?php elseif ( 'scan_skipped' === $notice ) : ?>
+		<?php if ( 'scan_skipped' === $notice ) : ?>
 			<div class="alert alert-warning" role="alert">
-				<?php esc_html_e( 'Scan was skipped. Make sure monitoring is enabled and WooCommerce is active.', 'woo-order-doctor' ); ?>
+				<?php esc_html_e( 'Scan was skipped. Make sure monitoring is enabled and WooCommerce is active.', 'order-health-doctor' ); ?>
 			</div>
 		<?php endif; ?>
 
 		<div class="row g-3 mb-3">
 
-			<!-- Health score card -->
+			<!-- Health score card with animated gauge -->
 			<div class="col-md-4">
 				<div class="card h-100">
-					<div class="card-body">
-						<h2 class="h6 text-muted"><?php esc_html_e( 'Order Health Score', 'woo-order-doctor' ); ?></h2>
-						<div class="display-4 fw-bold"><?php echo esc_html( $health ); ?><span class="fs-5 text-muted">/100</span></div>
-						<div class="progress my-2" style="height:10px;">
-							<div class="progress-bar <?php echo esc_attr( $score_class ); ?>" role="progressbar" style="width: <?php echo esc_attr( $health ); ?>%;" aria-valuenow="<?php echo esc_attr( $health ); ?>" aria-valuemin="0" aria-valuemax="100"></div>
+					<div class="card-body text-center">
+						<h2 class="h6 text-muted"><?php esc_html_e( 'Order Health Score', 'order-health-doctor' ); ?></h2>
+						<div class="ohd-gauge" data-score="<?php echo esc_attr( $health ); ?>" data-circumference="<?php echo esc_attr( $circumference ); ?>">
+							<svg viewBox="0 0 120 120" width="140" height="140">
+								<circle class="ohd-gauge-track" cx="60" cy="60" r="<?php echo esc_attr( $radius ); ?>" />
+								<circle class="ohd-gauge-fill" cx="60" cy="60" r="<?php echo esc_attr( $radius ); ?>"
+									stroke="<?php echo esc_attr( $band_hex ); ?>"
+									stroke-dasharray="<?php echo esc_attr( $circumference ); ?>"
+									stroke-dashoffset="<?php echo esc_attr( $circumference ); ?>"
+									transform="rotate(-90 60 60)" />
+								<text class="ohd-gauge-num" x="60" y="66" text-anchor="middle">0</text>
+							</svg>
 						</div>
-						<span class="badge <?php echo esc_attr( $score_class ); ?>"><?php echo esc_html( $health_label ); ?></span>
+						<span class="badge <?php echo esc_attr( $band_class ); ?> ohd-health-badge"><?php echo esc_html( $health_label ); ?></span>
 					</div>
 				</div>
 			</div>
 
 			<!-- Summary counts card -->
-			<div class="col-md-8">
+			<div class="col-md-5">
 				<div class="card h-100">
 					<div class="card-body">
-						<h2 class="h6 text-muted mb-3"><?php esc_html_e( 'Open Issues', 'woo-order-doctor' ); ?></h2>
+						<h2 class="h6 text-muted mb-3"><?php esc_html_e( 'Open Issues', 'order-health-doctor' ); ?></h2>
 						<div class="row text-center g-2">
 							<div class="col">
-								<div class="fs-3 fw-bold"><?php echo esc_html( $counts['total'] ); ?></div>
-								<div class="text-muted small"><?php esc_html_e( 'Total', 'woo-order-doctor' ); ?></div>
+								<div class="fs-3 fw-bold ohd-count" data-count="total"><?php echo esc_html( $counts['total'] ); ?></div>
+								<div class="text-muted small"><?php esc_html_e( 'Total', 'order-health-doctor' ); ?></div>
 							</div>
 							<div class="col">
-								<div class="fs-3 fw-bold text-danger"><?php echo esc_html( $counts['critical'] ); ?></div>
-								<div class="text-muted small"><?php esc_html_e( 'Critical', 'woo-order-doctor' ); ?></div>
+								<div class="fs-3 fw-bold text-danger ohd-count" data-count="critical"><?php echo esc_html( $counts['critical'] ); ?></div>
+								<div class="text-muted small"><?php esc_html_e( 'Critical', 'order-health-doctor' ); ?></div>
 							</div>
 							<div class="col">
-								<div class="fs-3 fw-bold text-warning"><?php echo esc_html( $counts['high'] ); ?></div>
-								<div class="text-muted small"><?php esc_html_e( 'High', 'woo-order-doctor' ); ?></div>
+								<div class="fs-3 fw-bold text-warning ohd-count" data-count="high"><?php echo esc_html( $counts['high'] ); ?></div>
+								<div class="text-muted small"><?php esc_html_e( 'High', 'order-health-doctor' ); ?></div>
 							</div>
 							<div class="col">
-								<div class="fs-3 fw-bold text-info"><?php echo esc_html( $counts['medium'] ); ?></div>
-								<div class="text-muted small"><?php esc_html_e( 'Medium', 'woo-order-doctor' ); ?></div>
+								<div class="fs-3 fw-bold text-info ohd-count" data-count="medium"><?php echo esc_html( $counts['medium'] ); ?></div>
+								<div class="text-muted small"><?php esc_html_e( 'Medium', 'order-health-doctor' ); ?></div>
 							</div>
 							<div class="col">
-								<div class="fs-3 fw-bold text-secondary"><?php echo esc_html( $counts['low'] ); ?></div>
-								<div class="text-muted small"><?php esc_html_e( 'Low', 'woo-order-doctor' ); ?></div>
+								<div class="fs-3 fw-bold text-secondary ohd-count" data-count="low"><?php echo esc_html( $counts['low'] ); ?></div>
+								<div class="text-muted small"><?php esc_html_e( 'Low', 'order-health-doctor' ); ?></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			<!-- Trend sparkline card -->
+			<div class="col-md-3">
+				<div class="card h-100">
+					<div class="card-body">
+						<h2 class="h6 text-muted"><?php esc_html_e( 'Health Trend', 'order-health-doctor' ); ?></h2>
+						<?php if ( count( $spark_scores ) >= 2 ) : ?>
+							<svg class="ohd-sparkline" viewBox="0 0 100 40" preserveAspectRatio="none" width="100%" height="60"
+								data-scores="<?php echo esc_attr( wp_json_encode( $spark_scores ) ); ?>"
+								data-color="<?php echo esc_attr( $band_hex ); ?>"></svg>
+							<div class="text-muted small mt-1"><?php echo esc_html( sprintf( /* translators: %d: days */ _n( 'Last %d day', 'Last %d days', count( $spark_scores ), 'order-health-doctor' ), count( $spark_scores ) ) ); ?></div>
+						<?php else : ?>
+							<p class="text-muted small mb-0"><?php esc_html_e( 'The trend appears after a couple of daily scans.', 'order-health-doctor' ); ?></p>
+						<?php endif; ?>
+					</div>
+				</div>
+			</div>
 		</div>
 
-		<!-- Scan controls -->
+		<!-- Scan controls (AJAX, degrades to a normal POST) -->
 		<div class="card mb-3">
-			<div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
-				<div>
-					<strong><?php esc_html_e( 'Last scan:', 'woo-order-doctor' ); ?></strong>
-					<?php
-					if ( $last_scan ) {
-						echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_scan ) );
-					} else {
-						esc_html_e( 'Never', 'woo-order-doctor' );
-					}
-					?>
-				</div>
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-					<input type="hidden" name="action" value="wod_run_scan" />
-					<?php wp_nonce_field( 'wod_run_scan' ); ?>
-					<button type="submit" class="btn btn-primary"><?php esc_html_e( 'Run Scan Now', 'woo-order-doctor' ); ?></button>
+			<div class="card-body d-flex flex-wrap justify-content-end align-items-center gap-2">
+				<form id="ohd-scan-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="ohd_run_scan" />
+					<?php wp_nonce_field( 'ohd_run_scan' ); ?>
+					<button type="submit" id="ohd-scan-btn" class="btn btn-primary">
+						<span class="ohd-scan-label"><?php esc_html_e( 'Run Scan Now', 'order-health-doctor' ); ?></span>
+					</button>
 				</form>
 			</div>
 		</div>
@@ -124,37 +139,30 @@ if ( $health >= 90 ) {
 		<!-- Recent issues -->
 		<div class="card">
 			<div class="card-header d-flex justify-content-between align-items-center">
-				<span class="fw-semibold"><?php esc_html_e( 'Recent Issues', 'woo-order-doctor' ); ?></span>
-				<a class="btn btn-sm btn-outline-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=woo-order-doctor-issues' ) ); ?>"><?php esc_html_e( 'View all issues', 'woo-order-doctor' ); ?></a>
+				<span class="fw-semibold"><?php esc_html_e( 'Recent Issues', 'order-health-doctor' ); ?></span>
+				<a class="btn btn-sm btn-outline-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=order-health-doctor-issues' ) ); ?>"><?php esc_html_e( 'View all issues', 'order-health-doctor' ); ?></a>
 			</div>
 			<div class="card-body p-0">
-				<?php if ( empty( $recent_issues ) ) : ?>
-					<p class="p-3 mb-0 text-muted"><?php esc_html_e( 'No open issues. Your store looks healthy!', 'woo-order-doctor' ); ?></p>
-				<?php else : ?>
-					<table class="table table-hover mb-0 align-middle">
-						<thead>
-							<tr>
-								<th><?php esc_html_e( 'Severity', 'woo-order-doctor' ); ?></th>
-								<th><?php esc_html_e( 'Issue', 'woo-order-doctor' ); ?></th>
-								<th><?php esc_html_e( 'Detected', 'woo-order-doctor' ); ?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php foreach ( $recent_issues as $issue ) : ?>
-								<tr>
-									<td><span class="badge <?php echo esc_attr( Woo_Order_Doctor_Admin::severity_badge_class( $issue->severity ) ); ?>"><?php echo esc_html( ucfirst( $issue->severity ) ); ?></span></td>
-									<td>
-										<strong><?php echo esc_html( $issue->title ); ?></strong>
-										<div class="text-muted small"><?php echo esc_html( $issue->message ); ?></div>
-									</td>
-									<td class="text-nowrap small"><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $issue->detected_at ) ); ?></td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
-				<?php endif; ?>
+				<table class="table table-hover mb-0 align-middle">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Severity', 'order-health-doctor' ); ?></th>
+							<th><?php esc_html_e( 'Issue', 'order-health-doctor' ); ?></th>
+							<th><?php esc_html_e( 'Detected', 'order-health-doctor' ); ?></th>
+						</tr>
+					</thead>
+					<tbody id="ohd-recent-body">
+						<?php
+						// Shared renderer so the AJAX scan can swap identical markup.
+						echo Order_Health_Doctor_Admin::render_recent_issue_rows( $recent_issues ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
+					</tbody>
+				</table>
 			</div>
 		</div>
 
 	</div>
+
+	<!-- Toast container for dynamic feedback -->
+	<div class="ohd-toasts" id="ohd-toasts" aria-live="polite" aria-atomic="true"></div>
 </div>

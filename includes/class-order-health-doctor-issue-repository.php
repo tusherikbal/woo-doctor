@@ -2,7 +2,7 @@
 /**
  * Issue repository: all reads/writes to the custom issues table.
  *
- * @package Woo_Order_Doctor
+ * @package Order_Health_Doctor
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Woo_Order_Doctor_Issue_Repository
+ * Class Order_Health_Doctor_Issue_Repository
  *
  * Encapsulates every database interaction with the custom issues table so the
  * rest of the plugin never writes raw SQL. All queries use $wpdb->prepare for
  * dynamic values.
  */
-class Woo_Order_Doctor_Issue_Repository {
+class Order_Health_Doctor_Issue_Repository {
 
 	/**
 	 * Allowed status values. Used to validate enum-style input.
@@ -88,7 +88,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function create_or_update_issue( $data ) {
 		global $wpdb;
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 
 		// Validate the enum-style fields before trusting them.
 		$issue_type  = sanitize_key( $data['issue_type'] );
@@ -109,10 +109,13 @@ class Woo_Order_Doctor_Issue_Repository {
 		);
 
 		if ( $existing ) {
-			// Re-detecting an issue always sets it back to "open" (this both keeps
-			// open issues open and reopens any previously resolved/ignored ones).
-			$new_status  = 'open';
-			$is_reopened = ( 'open' !== $existing->status );
+			// Decide the status a re-detection should land in. We respect the
+			// admin's deliberate dismissals: an "ignored" issue stays ignored, and
+			// "resolved" issues only reopen when the reopen_resolved setting allows
+			// it. This stops the scanner from resurrecting (and re-alerting) issues
+			// the admin has consciously closed.
+			$new_status  = self::resolve_reopen_status( $existing->status );
+			$is_reopened = ( 'open' === $new_status && 'open' !== $existing->status );
 
 			$wpdb->update(
 				$table,
@@ -170,6 +173,29 @@ class Woo_Order_Doctor_Issue_Repository {
 	}
 
 	/**
+	 * Decide what status a re-detected issue should take, honouring dismissals.
+	 *
+	 * - open      → stays open.
+	 * - ignored   → stays ignored (never auto-reopened).
+	 * - resolved  → reopens only when the reopen_resolved setting is "yes".
+	 * - reviewed  → reopens (it was acknowledged, not dismissed).
+	 *
+	 * @param string $current_status The existing row's status.
+	 * @return string The status to store.
+	 */
+	private static function resolve_reopen_status( $current_status ) {
+		if ( 'ignored' === $current_status ) {
+			return 'ignored';
+		}
+
+		if ( 'resolved' === $current_status && 'yes' !== Order_Health_Doctor_Settings::get( 'reopen_resolved', 'yes' ) ) {
+			return 'resolved';
+		}
+
+		return 'open';
+	}
+
+	/**
 	 * Record that a notification email was sent for an issue.
 	 *
 	 * Sets last_notified_at to now and increments notification_count. Used by
@@ -181,7 +207,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function mark_notified( $issue_id ) {
 		global $wpdb;
 
-		$table    = Woo_Order_Doctor_DB::table_name();
+		$table    = Order_Health_Doctor_DB::table_name();
 		$issue_id = absint( $issue_id );
 
 		// Bump the counter and timestamp in a single prepared statement.
@@ -208,7 +234,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function was_recently_notified( $issue_id, $cooldown_hours = 24 ) {
 		global $wpdb;
 
-		$table    = Woo_Order_Doctor_DB::table_name();
+		$table    = Order_Health_Doctor_DB::table_name();
 		$issue_id = absint( $issue_id );
 
 		$last_notified = $wpdb->get_var(
@@ -248,9 +274,10 @@ class Woo_Order_Doctor_Issue_Repository {
 	 * @return array Array of issue row objects.
 	 */
 	public static function get_issues( $args = array() ) {
+
 		global $wpdb;
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 
 		$where  = array( '1=1' );
 		$params = array();
@@ -296,6 +323,49 @@ class Woo_Order_Doctor_Issue_Repository {
 	}
 
 	/**
+	 * Count issues matching the same filters accepted by get_issues().
+	 *
+	 * @param array $args Filter arguments.
+	 * @return int
+	 */
+	public static function count_issues( $args = array() ) {
+
+		global $wpdb;
+
+		$table  = Order_Health_Doctor_DB::table_name();
+		$where  = array( '1=1' );
+		$params = array();
+
+		if ( ! empty( $args['status'] ) && in_array( $args['status'], self::$valid_statuses, true ) ) {
+			$where[]  = 'status = %s';
+			$params[] = $args['status'];
+		}
+		if ( ! empty( $args['severity'] ) && in_array( $args['severity'], self::$valid_severities, true ) ) {
+			$where[]  = 'severity = %s';
+			$params[] = $args['severity'];
+		}
+		if ( ! empty( $args['issue_type'] ) ) {
+			$where[]  = 'issue_type = %s';
+			$params[] = sanitize_key( $args['issue_type'] );
+		}
+		if ( ! empty( $args['object_id'] ) ) {
+			$where[]  = '( object_id = %d OR related_object_id = %d )';
+			$params[] = absint( $args['object_id'] );
+			$params[] = absint( $args['object_id'] );
+		}
+
+		// The table name comes from the trusted WordPress database prefix.
+		$sql = "SELECT COUNT(*) FROM {$table} WHERE " . implode( ' AND ', $where ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		if ( empty( $params ) ) {
+		   // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			return (int) $wpdb->get_var( $sql );
+		}
+
+     // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
+	}
+	/**
 	 * Get counts of open issues grouped by severity, plus a total.
 	 *
 	 * Used by the dashboard health score and summary cards.
@@ -305,7 +375,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function get_issue_counts() {
 		global $wpdb;
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 
 		$counts = array(
 			'total'    => 0,
@@ -342,7 +412,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function get_recent_issues( $limit = 10 ) {
 		global $wpdb;
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 		$limit = absint( $limit );
 
 		return $wpdb->get_results(
@@ -368,7 +438,7 @@ class Woo_Order_Doctor_Issue_Repository {
 			return false;
 		}
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 
 		$result = $wpdb->update(
 			$table,
@@ -395,7 +465,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function delete_resolved_older_than( $days ) {
 		global $wpdb;
 
-		$table     = Woo_Order_Doctor_DB::table_name();
+		$table     = Order_Health_Doctor_DB::table_name();
 		$days      = absint( $days );
 		$threshold = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
 
@@ -416,7 +486,7 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function get_issue_by_id( $issue_id ) {
 		global $wpdb;
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 
 		return $wpdb->get_row(
 			$wpdb->prepare(
@@ -438,13 +508,14 @@ class Woo_Order_Doctor_Issue_Repository {
 	public static function get_open_issues_for_object( $object_type, $object_id ) {
 		global $wpdb;
 
-		$table = Woo_Order_Doctor_DB::table_name();
+		$table = Order_Health_Doctor_DB::table_name();
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Trusted prefixed table name.
 				"SELECT * FROM {$table}
 				WHERE status = 'open' AND object_type = %s AND ( object_id = %d OR related_object_id = %d )
-				ORDER BY FIELD(severity,'critical','high','medium','low','info')", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				ORDER BY FIELD(severity,'critical','high','medium','low','info')",
 				sanitize_key( $object_type ),
 				absint( $object_id ),
 				absint( $object_id )

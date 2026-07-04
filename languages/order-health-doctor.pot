@@ -1,0 +1,948 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Order Health Doctor 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/order-health-doctor\n"
+"POT-Creation-Date: 2026-07-03 22:21+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: order-health-doctor\n"
+
+#: includes/class-order-health-doctor-ajax.php:138
+msgid "%d issue updated."
+msgid_plural "%d issues updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-order-health-doctor-dashboard-widget.php:70
+msgid "%d open issues"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:149
+msgid "%d selected"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:74
+msgid "%s order issue"
+msgstr ""
+
+#: admin/views/issues.php:203
+msgid "&laquo; Previous"
+msgstr ""
+
+#: admin/views/issues.php:144
+msgid "Actions"
+msgstr ""
+
+#: admin/views/settings.php:64
+msgid "Add a Telegram bot token and chat ID, then save, before sending a test."
+msgstr ""
+
+#: admin/views/issues.php:28
+msgid "All severities"
+msgstr ""
+
+#: admin/views/issues.php:21
+msgid "All statuses"
+msgstr ""
+
+#: admin/views/issues.php:35
+msgid "All types"
+msgstr ""
+
+#: admin/views/issues.php:121
+msgid "Apply"
+msgstr ""
+
+#: admin/views/settings.php:135
+msgid "Automatically delete resolved issues older than this many days."
+msgstr ""
+
+#: admin/views/settings.php:285
+msgid "Bot token"
+msgstr ""
+
+#: admin/views/issues.php:116
+msgid "Bulk actions"
+msgstr ""
+
+#: admin/views/settings.php:290
+msgid "Chat ID"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:147
+msgid "Choose an action."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-duplicate-order.php:112
+msgid "Compare both orders and cancel or refund one if it is a genuine duplicate."
+msgstr ""
+
+#: admin/views/settings.php:257
+msgid "Configured recipients: %d"
+msgstr ""
+
+#: admin/views/issues.php:45
+msgid "Could not update the issue status."
+msgstr ""
+
+#: admin/views/settings.php:287
+msgid "Create a bot with @BotFather in Telegram and paste the token it gives you."
+msgstr ""
+
+#: admin/views/dashboard.php:89 admin/views/issues.php:29 admin/views/settings-rules.php:22 includes/channels/class-order-health-doctor-channel-email.php:239 includes/class-order-health-doctor-admin.php:364
+msgid "Critical"
+msgstr ""
+
+#: admin/views/settings.php:182
+msgid "Custom emails"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:78
+msgid "Customer Completed Order"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:77
+msgid "Customer Processing Order"
+msgstr ""
+
+#: admin/views/settings.php:204
+msgid "Custom recipient emails"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:233 includes/channels/class-order-health-doctor-channel-telegram.php:105
+msgid "Daily Order Health Summary"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:59 includes/class-order-health-doctor-admin.php:60
+msgid "Dashboard"
+msgstr ""
+
+#: admin/views/settings.php:115
+msgid "Delete all plugin data on uninstall"
+msgstr ""
+
+#: admin/views/dashboard.php:151 admin/views/issues.php:142
+msgid "Detected"
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:242
+msgid "Detected at"
+msgstr ""
+
+#: admin/views/settings.php:86
+msgid "Detection"
+msgstr ""
+
+#: admin/views/settings-rules.php:32
+msgid "Detection Rules"
+msgstr ""
+
+#: admin/views/settings.php:124
+msgid "Detection thresholds"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:302
+msgid "Dismiss for today"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:561
+msgid "Duplicate"
+msgstr ""
+
+#: admin/views/issues.php:166
+msgid "Duplicate #%d"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:532 includes/rules/class-order-health-doctor-rule-duplicate-order.php:33
+msgid "Duplicate Order"
+msgstr ""
+
+#: admin/views/settings.php:132
+msgid "Duplicate order window (minutes)"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:347
+msgid "Edit product"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:566
+msgid "Edit Product"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-stock-mismatch.php:104
+msgid "Edit the product and correct the stock quantity, then review recent orders for this item."
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:36
+msgid "Email"
+msgstr ""
+
+#: admin/views/settings.php:198
+msgid "Email from name"
+msgstr ""
+
+#: admin/views/settings.php:154
+msgid "Email Notifications"
+msgstr ""
+
+#: admin/views/issues.php:172
+msgid "Email settings"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:534 includes/rules/class-order-health-doctor-rule-email-settings.php:32
+msgid "Email Settings Warning"
+msgstr ""
+
+#: admin/views/settings-rules.php:39
+msgid "Enabled"
+msgstr ""
+
+#: admin/views/settings.php:164
+msgid "Enable email notifications"
+msgstr ""
+
+#: admin/views/settings.php:103
+msgid "Enable monitoring (manual and scheduled scans)"
+msgstr ""
+
+#: admin/views/settings.php:280
+msgid "Enable Telegram alerts"
+msgstr ""
+
+#: admin/views/settings.php:206
+msgid "Enter one email per line or comma separated. Invalid addresses are ignored."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:356
+msgid "Excellent"
+msgstr ""
+
+#: admin/views/issues.php:124
+msgid "Export CSV"
+msgstr ""
+
+#: admin/views/settings.php:134
+msgid "Failed order average multiplier"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:576
+msgid "Failed Orders"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:531 includes/rules/class-order-health-doctor-rule-failed-order-spike.php:33
+msgid "Failed Order Spike"
+msgstr ""
+
+#: admin/views/settings.php:133
+msgid "Failed order threshold"
+msgstr ""
+
+#: admin/views/issues.php:87
+msgid "Filter"
+msgstr ""
+
+#: admin/views/settings.php:131
+msgid "Flag on-hold orders older than this."
+msgstr ""
+
+#: admin/views/settings.php:129
+msgid "Flag paid-looking pending/on-hold orders older than this."
+msgstr ""
+
+#: admin/views/settings.php:130
+msgid "Flag processing orders older than this."
+msgstr ""
+
+#: admin/views/settings.php:275
+msgid "Free internal alerts to a Telegram chat. Uses the same severity and issue-type filters as email above."
+msgstr ""
+
+#: admin/views/settings.php:85 admin/views/settings.php:99
+msgid "General"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:359
+msgid "Good"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:237
+msgid "Health score"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:111
+msgid "Health score: %1$d/100 (%2$s)"
+msgstr ""
+
+#: admin/views/dashboard.php:112
+msgid "Health Trend"
+msgstr ""
+
+#: admin/views/dashboard.php:93 admin/views/issues.php:30 admin/views/settings-rules.php:23 includes/channels/class-order-health-doctor-channel-email.php:240
+msgid "High"
+msgstr ""
+
+#: admin/views/settings.php:128
+msgid "How far back to look for order issues."
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:234
+msgid "ID"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:141
+msgid "If you can read this, Telegram alerts for %s are set up correctly."
+msgstr ""
+
+#: admin/views/issues.php:119 includes/class-order-health-doctor-admin.php:586 includes/class-order-health-doctor-order-metabox.php:88
+msgid "Ignore"
+msgstr ""
+
+#: admin/views/issues.php:25
+msgid "Ignored"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:145
+msgid "Ignore this issue? It will be hidden from the open issues list."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:95
+msgid "Important order emails are disabled"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:39
+msgid "Important WooCommerce transactional emails disabled or missing a recipient."
+msgstr ""
+
+#: admin/views/issues.php:33 admin/views/settings-rules.php:26
+msgid "Info"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:384
+msgid "Internal alert from Order Health Doctor. No customer data is shared."
+msgstr ""
+
+#: includes/class-order-health-doctor-ajax.php:94
+msgid "Invalid request."
+msgstr ""
+
+#: admin/views/dashboard.php:150 admin/views/issues.php:140 includes/channels/class-order-health-doctor-channel-email.php:251
+msgid "Issue"
+msgstr ""
+
+#: admin/views/issues.php:40 includes/class-order-health-doctor-admin.php:68 includes/class-order-health-doctor-admin.php:69
+msgid "Issues"
+msgstr ""
+
+#: admin/views/issues.php:193
+msgid "Issues pagination"
+msgstr ""
+
+#: admin/views/issues.php:43
+msgid "Issue status updated."
+msgstr ""
+
+#: admin/views/issues.php:73 includes/channels/class-order-health-doctor-channel-email.php:199
+msgid "Issue type"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:151 includes/class-order-health-doctor-ajax.php:103
+msgid "Issue updated."
+msgstr ""
+
+#: admin/views/dashboard.php:117
+msgid "Last %d day"
+msgid_plural "Last %d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/views/dashboard.php:43
+msgid "Last scan:"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-duplicate-order.php:40
+msgid "Likely duplicate orders from the same customer (same total, close together)."
+msgstr ""
+
+#: admin/views/dashboard.php:101 admin/views/issues.php:32 admin/views/settings-rules.php:25 includes/channels/class-order-health-doctor-channel-email.php:242
+msgid "Low"
+msgstr ""
+
+#: admin/views/issues.php:117 includes/class-order-health-doctor-order-metabox.php:86
+msgid "Mark Reviewed"
+msgstr ""
+
+#: admin/views/dashboard.php:97 admin/views/issues.php:31 admin/views/settings-rules.php:24 includes/channels/class-order-health-doctor-channel-email.php:241
+msgid "Medium"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:200 includes/class-order-health-doctor-actions.php:239
+msgid "Message"
+msgstr ""
+
+#: admin/views/settings.php:133
+msgid "Minimum failed orders in 24h before a spike can be reported."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:362
+msgid "Needs Attention"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-stock-mismatch.php:97
+msgid "Negative stock detected"
+msgstr ""
+
+#: admin/views/dashboard.php:44 includes/class-order-health-doctor-ajax.php:174
+msgid "Never"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:76
+msgid "New Order"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:114
+msgid "New Order email has no admin recipient"
+msgstr ""
+
+#: admin/views/issues.php:204
+msgid "Next &raquo;"
+msgstr ""
+
+#: admin/views/issues.php:132
+msgid "No issues match your filters."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:499
+msgid "No open issues. Your store looks healthy!"
+msgstr ""
+
+#: includes/class-order-health-doctor-order-metabox.php:62
+msgid "No Order Health Doctor issues found for this order."
+msgstr ""
+
+#: admin/views/settings.php:87
+msgid "Notifications"
+msgstr ""
+
+#: admin/views/settings.php:58
+msgid "No valid recipients are configured. Add recipients and save before sending a test."
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:241
+msgid "Object ID"
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:240
+msgid "Object type"
+msgstr ""
+
+#: admin/views/settings.php:131
+msgid "On-hold too long (days)"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:530 includes/rules/class-order-health-doctor-rule-on-hold-too-long.php:31
+msgid "On Hold Too Long"
+msgstr ""
+
+#: admin/views/settings.php:220
+msgid "Only users who can manage WooCommerce or the site are listed. Hold Ctrl/Cmd to select multiple."
+msgstr ""
+
+#: admin/views/issues.php:22
+msgid "Open"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:119
+msgid "Open: %1$d · Critical: %2$d · High: %3$d"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:321
+msgid "Open Dashboard"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:126
+msgid "Open dashboard"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:353
+msgid "Open email settings"
+msgstr ""
+
+#: admin/views/dashboard.php:81
+msgid "Open Issues"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:238
+msgid "Open issues"
+msgstr ""
+
+#: includes/class-order-health-doctor-dashboard-widget.php:84
+msgid "Open Order Doctor"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-on-hold-too-long.php:90
+msgid "Open the order, confirm whether payment was received, and update the status accordingly."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-processing-too-long.php:90
+msgid "Open the order and confirm fulfillment status, then mark it completed if appropriate."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-paid-but-pending.php:104
+msgid "Open the order and verify payment notes before manually changing the order status."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:116
+msgid "Open WooCommerce email settings and add a recipient to the New Order email."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:101
+msgid "Open WooCommerce email settings and enable the required transactional emails."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-on-hold-too-long.php:86
+msgid "Order #%1$s has been on hold for %2$d days. Payment may be awaiting confirmation."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-processing-too-long.php:86
+msgid "Order #%1$s has been processing for %2$d days. It may be waiting to be completed or shipped."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-paid-but-pending.php:100
+msgid "Order #%1$s may need review because it is still pending after %2$d minutes."
+msgstr ""
+
+#: admin/views/issues.php:162
+msgid "Order #%d"
+msgstr ""
+
+#: admin/views/issues.php:82
+msgid "Order/Product ID"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:48
+msgid "Order Doctor"
+msgstr ""
+
+#: includes/class-order-health-doctor-dashboard-widget.php:38
+msgid "Order Health"
+msgstr ""
+
+#: admin/views/dashboard.php:41 includes/class-order-health-doctor-admin.php:47 includes/class-order-health-doctor-order-metabox.php:40 includes/class-order-health-doctor.php:120
+msgid "Order Health Doctor"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:298
+msgid "Order Health Doctor found %d critical order issues. Review now."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:265
+msgid "Order Health Doctor requires WooCommerce to be installed and active."
+msgstr ""
+
+#: admin/views/settings.php:158 includes/channels/class-order-health-doctor-channel-email.php:283
+msgid "Order Health Doctor sends internal alerts only. It does not email customers."
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:137
+msgid "Order Health Doctor test"
+msgstr ""
+
+#: admin/views/dashboard.php:60
+msgid "Order Health Score"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-on-hold-too-long.php:83
+msgid "Order on hold for too long"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-processing-too-long.php:83
+msgid "Order processing for too long"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-duplicate-order.php:108
+msgid "Orders #%1$s and #%2$s look like duplicates: same customer and total, created close together."
+msgstr ""
+
+#: admin/views/settings.php:132
+msgid "Orders from the same customer with the same total within this window are flagged as possible duplicates."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-processing-too-long.php:38
+msgid "Orders stuck in processing past the configured number of days."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-on-hold-too-long.php:38
+msgid "Orders stuck on hold past the configured number of days."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-paid-but-pending.php:40
+msgid "Paid-looking pending/on-hold orders older than the threshold."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:528 includes/rules/class-order-health-doctor-rule-paid-but-pending.php:33
+msgid "Paid But Pending"
+msgstr ""
+
+#: admin/views/settings.php:129
+msgid "Paid pending threshold (minutes)"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-duplicate-order.php:105
+msgid "Possible duplicate order"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-paid-but-pending.php:97
+msgid "Possible paid order still pending"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:529 includes/rules/class-order-health-doctor-rule-processing-too-long.php:31
+msgid "Processing Too Long"
+msgstr ""
+
+#: admin/views/settings.php:130
+msgid "Processing too long (days)"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-stock-mismatch.php:100
+msgid "Product \"%1$s\" has a negative stock quantity (%2$s), which usually means it was oversold."
+msgstr ""
+
+#: admin/views/issues.php:170
+msgid "Product #%d"
+msgstr ""
+
+#: admin/views/dashboard.php:142
+msgid "Recent Issues"
+msgstr ""
+
+#: admin/views/settings.php:178
+msgid "Recipient mode"
+msgstr ""
+
+#: admin/views/issues.php:141
+msgid "Related"
+msgstr ""
+
+#: admin/views/settings.php:111
+msgid "Reopen resolved issues if the problem is detected again"
+msgstr ""
+
+#: admin/views/issues.php:88
+msgid "Reset"
+msgstr ""
+
+#: admin/views/issues.php:118 includes/class-order-health-doctor-admin.php:585 includes/class-order-health-doctor-order-metabox.php:87
+msgid "Resolve"
+msgstr ""
+
+#: admin/views/issues.php:24
+msgid "Resolved"
+msgstr ""
+
+#: admin/views/settings.php:135
+msgid "Resolved issue retention (days)"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:584
+msgid "Review"
+msgstr ""
+
+#: includes/class-order-health-doctor-dashboard-widget.php:76
+msgid "Review %d critical"
+msgstr ""
+
+#: admin/views/issues.php:23
+msgid "Reviewed"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:301
+msgid "Review Issues"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-failed-order-spike.php:94
+msgid "Review the failed orders and check your payment gateway status and logs."
+msgstr ""
+
+#: admin/views/settings-rules.php:40
+msgid "Rule"
+msgstr ""
+
+#: admin/views/dashboard.php:133 includes/class-order-health-doctor-admin.php:143
+msgid "Run Scan Now"
+msgstr ""
+
+#: admin/views/settings.php:90 admin/views/settings.php:307
+msgid "Save Settings"
+msgstr ""
+
+#: admin/views/settings.php:297
+msgid "Save your bot token and chat ID first, then send a test message to confirm delivery."
+msgstr ""
+
+#: admin/views/settings.php:261
+msgid "Save your settings first, then send a test to confirm delivery."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:150
+msgid "Scan complete."
+msgstr ""
+
+#: includes/class-order-health-doctor-ajax.php:75
+msgid "Scan complete. %d issue detected or updated."
+msgid_plural "Scan complete. %d issues detected or updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-order-health-doctor-admin.php:142
+msgid "Scanning…"
+msgstr ""
+
+#: admin/views/settings.php:128
+msgid "Scan order range (days)"
+msgstr ""
+
+#: admin/views/dashboard.php:50 includes/class-order-health-doctor-ajax.php:56
+msgid "Scan was skipped. Make sure monitoring is enabled and WooCommerce is active."
+msgstr ""
+
+#: includes/class-order-health-doctor-ajax.php:37
+msgid "Security check failed. Please reload the page."
+msgstr ""
+
+#: admin/views/issues.php:138
+msgid "Select all"
+msgstr ""
+
+#: includes/class-order-health-doctor-ajax.php:120
+msgid "Select at least one issue and an action."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:146
+msgid "Select at least one issue first."
+msgstr ""
+
+#: admin/views/settings.php:183 admin/views/settings.php:211
+msgid "Selected WordPress users"
+msgstr ""
+
+#: admin/views/issues.php:150
+msgid "Select issue"
+msgstr ""
+
+#: admin/views/settings.php:172
+msgid "Send a daily health summary (only when open issues exist)"
+msgstr ""
+
+#: admin/views/settings.php:239
+msgid "Send alerts for issue types"
+msgstr ""
+
+#: admin/views/settings.php:225
+msgid "Send alerts for severities"
+msgstr ""
+
+#: admin/views/settings.php:168
+msgid "Send immediate alerts when matching issues are detected"
+msgstr ""
+
+#: admin/views/settings.php:263
+msgid "Send Test Email"
+msgstr ""
+
+#: admin/views/settings.php:298
+msgid "Send Test Message"
+msgstr ""
+
+#: admin/views/settings.php:49 includes/class-order-health-doctor-admin.php:77 includes/class-order-health-doctor-admin.php:78 includes/class-order-health-doctor-admin.php:570
+msgid "Settings"
+msgstr ""
+
+#: admin/views/settings.php:52
+msgid "Settings saved."
+msgstr ""
+
+#: admin/views/settings.php:83
+msgid "Settings sections"
+msgstr ""
+
+#: admin/views/dashboard.php:149 admin/views/issues.php:64 admin/views/issues.php:139 admin/views/settings-rules.php:41 includes/channels/class-order-health-doctor-channel-email.php:198 includes/channels/class-order-health-doctor-channel-email.php:250 includes/class-order-health-doctor-actions.php:235
+msgid "Severity"
+msgstr ""
+
+#: admin/views/settings.php:107
+msgid "Show a daily admin notice when critical issues exist"
+msgstr ""
+
+#: admin/views/settings.php:184
+msgid "Site admin + custom emails"
+msgstr ""
+
+#: admin/views/settings.php:181
+msgid "Site admin email"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:152
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-failed-order-spike.php:87
+msgid "Spike in failed orders detected"
+msgstr ""
+
+#: admin/views/issues.php:55 admin/views/issues.php:143 includes/class-order-health-doctor-actions.php:237
+msgid "Status"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-stock-mismatch.php:38
+msgid "Stock-managed products that went below zero (oversold)."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:533 includes/rules/class-order-health-doctor-rule-stock-mismatch.php:31
+msgid "Stock Mismatch"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:201
+msgid "Suggested action"
+msgstr ""
+
+#: admin/views/issues.php:174
+msgid "System"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:38
+msgid "Telegram"
+msgstr ""
+
+#: admin/views/settings.php:271
+msgid "Telegram Alerts"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:275
+msgid "Test email"
+msgstr ""
+
+#: admin/views/settings.php:54
+msgid "Test email sent to the configured recipients."
+msgstr ""
+
+#: admin/views/settings.php:60
+msgid "Test message sent to your Telegram chat."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-failed-order-spike.php:90
+msgid "There were %1$d failed orders in the last 24 hours, compared to a recent daily average of about %2$s. This may indicate a payment gateway problem."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:98
+msgid "These transactional emails appear disabled: %s. Customers or admins may not be notified about orders."
+msgstr ""
+
+#: admin/views/settings.php:62
+msgid "The Telegram test failed. Double-check the bot token and chat ID."
+msgstr ""
+
+#: admin/views/settings.php:56
+msgid "The test email could not be sent. Check your WordPress email configuration."
+msgstr ""
+
+#: admin/views/dashboard.php:119
+msgid "The trend appears after a couple of daily scans."
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-email-settings.php:115
+msgid "The WooCommerce New Order email does not have an admin recipient configured, so store admins may not be notified of new orders."
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:279
+msgid "This is a test email from Order Health Doctor on %s. If you received it, your internal alert recipients are configured correctly."
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:238
+msgid "Title"
+msgstr ""
+
+#: admin/views/settings.php:134
+msgid "Today must exceed the recent daily average times this multiplier."
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:247
+msgid "Top open issues"
+msgstr ""
+
+#: admin/views/dashboard.php:85
+msgid "Total"
+msgstr ""
+
+#: admin/views/settings-rules.php:33
+msgid "Turn rules on/off and set how serious each one is for your store."
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:236
+msgid "Type"
+msgstr ""
+
+#: includes/rules/class-order-health-doctor-rule-failed-order-spike.php:40
+msgid "Unusual jump in failed orders in the last 24 hours."
+msgstr ""
+
+#: admin/views/dashboard.php:143
+msgid "View all issues"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:361
+msgid "View failed orders"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:323
+msgid "View Issues"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-telegram.php:87
+msgid "View issues"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:340
+msgid "View order"
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:559
+msgid "View Order"
+msgstr ""
+
+#: includes/class-order-health-doctor.php:114
+msgid "When Telegram alerts are enabled, Order Health Doctor sends the site name, issue severity, issue title, issue description, suggested action, health totals, and an administration link to the Telegram Bot API. The plugin does not send billing names, addresses, email addresses, or payment details. Telegram processes this information under its own privacy policy and terms."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:144
+msgid "Working…"
+msgstr ""
+
+#: includes/class-order-health-doctor-ajax.php:40
+msgid "You do not have permission to do that."
+msgstr ""
+
+#: includes/class-order-health-doctor-actions.php:62
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: includes/class-order-health-doctor-admin.php:250
+msgid "You do not have permission to view this page."
+msgstr ""
+
+#: admin/views/settings.php:292
+msgid "Your numeric chat ID, or @channelusername. Message @userinfobot to find your ID."
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:193
+msgid "[Order Health Doctor] %s Order Issue Detected"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:231
+msgid "[Order Health Doctor] Daily Order Health Summary"
+msgstr ""
+
+#: includes/channels/class-order-health-doctor-channel-email.php:273
+msgid "[Order Health Doctor] Test Email"
+msgstr ""
+

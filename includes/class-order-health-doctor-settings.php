@@ -2,7 +2,7 @@
 /**
  * Settings management.
  *
- * @package Woo_Order_Doctor
+ * @package Order_Health_Doctor
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,17 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Woo_Order_Doctor_Settings
+ * Class Order_Health_Doctor_Settings
  *
  * Central place to read, default and sanitize the plugin's settings, which are
- * stored as a single option array under the "wod_settings" key.
+ * stored as a single option array under the "ohd_settings" key.
  */
-class Woo_Order_Doctor_Settings {
+class Order_Health_Doctor_Settings {
 
 	/**
 	 * Option name where all settings are stored.
 	 */
-	const OPTION_NAME = 'wod_settings';
+	const OPTION_NAME = 'ohd_settings';
 
 	/**
 	 * Return the default settings array.
@@ -31,16 +31,25 @@ class Woo_Order_Doctor_Settings {
 	 */
 	public static function get_defaults() {
 		return array(
-			'enable_monitoring'        => 'yes',
-			'daily_admin_notice'       => 'yes',
-			'scan_days'                => 30,
-			'paid_pending_minutes'     => 30,
-			'processing_days'          => 5,
-			'on_hold_days'             => 2,
-			'duplicate_window_minutes' => 30,
-			'failed_order_threshold'   => 5,
-			'failed_order_multiplier'  => 2,
-			'delete_data_on_uninstall' => 'no',
+			'enable_monitoring'           => 'yes',
+			'daily_admin_notice'          => 'yes',
+			'scan_days'                   => 30,
+			'paid_pending_minutes'        => 30,
+			'processing_days'             => 5,
+			'on_hold_days'                => 2,
+			'duplicate_window_minutes'    => 30,
+			'failed_order_threshold'      => 5,
+			'failed_order_multiplier'     => 2,
+			'delete_data_on_uninstall'    => 'no',
+
+			// Housekeeping + reopen behaviour.
+			'resolved_retention_days'     => 30,
+			'reopen_resolved'             => 'yes',
+
+			// Per-rule config: rules[<rule_id>] = array( enabled, severity ).
+			// Left empty by default; each rule falls back to its own defaults via
+			// get_rule_config(). Only admin overrides are stored here.
+			'rules'                       => array(),
 
 			// Email notification settings (internal alerts only — never customers).
 			'email_notifications_enabled' => 'no',
@@ -59,8 +68,52 @@ class Woo_Order_Doctor_Settings {
 				'stock_mismatch',
 				'email_settings_warning',
 			),
-			'email_from_name'             => 'Woo Order Doctor',
+			'email_from_name'             => 'Order Health Doctor',
+
+			// Telegram channel (internal alerts only — never customers). Uses the
+			// shared email_severities / email_issue_types filters above.
+			'telegram_enabled'            => 'no',
+			'telegram_bot_token'          => '',
+			'telegram_chat_id'            => '',
 		);
+	}
+
+	/**
+	 * Resolve the effective per-rule config (enabled + severity) for a rule.
+	 *
+	 * Reads any admin override stored under settings['rules'][<id>] and falls back
+	 * to the rule's own defaults. This is the single helper the scanner and the
+	 * Rules settings table both use, so a rule and its stored config never drift.
+	 *
+	 * @param Order_Health_Doctor_Rule $rule Rule object.
+	 * @return array{enabled:string,severity:string}
+	 */
+	public static function get_rule_config( $rule ) {
+		$all   = self::get_all();
+		$rules = ( isset( $all['rules'] ) && is_array( $all['rules'] ) ) ? $all['rules'] : array();
+		$id    = $rule->get_id();
+		$cfg   = ( isset( $rules[ $id ] ) && is_array( $rules[ $id ] ) ) ? $rules[ $id ] : array();
+
+		$default_enabled = $rule->is_enabled_by_default() ? 'yes' : 'no';
+		$enabled         = isset( $cfg['enabled'] ) ? ( 'yes' === $cfg['enabled'] ? 'yes' : 'no' ) : $default_enabled;
+
+		$severity = ( isset( $cfg['severity'] ) && in_array( $cfg['severity'], self::severity_slugs(), true ) )
+			? $cfg['severity']
+			: $rule->get_default_severity();
+
+		return array(
+			'enabled'  => $enabled,
+			'severity' => $severity,
+		);
+	}
+
+	/**
+	 * The full list of severity slugs, most to least urgent.
+	 *
+	 * @return string[]
+	 */
+	public static function severity_slugs() {
+		return array( 'critical', 'high', 'medium', 'low', 'info' );
 	}
 
 	/**
@@ -157,6 +210,7 @@ class Woo_Order_Doctor_Settings {
 		$clean['enable_monitoring']        = self::sanitize_yes_no( $input, 'enable_monitoring' );
 		$clean['daily_admin_notice']       = self::sanitize_yes_no( $input, 'daily_admin_notice' );
 		$clean['delete_data_on_uninstall'] = self::sanitize_yes_no( $input, 'delete_data_on_uninstall' );
+		$clean['reopen_resolved']          = self::sanitize_yes_no( $input, 'reopen_resolved' );
 
 		// Integer fields with min/max validation. Format: key => [min, max].
 		$int_fields = array(
@@ -167,10 +221,11 @@ class Woo_Order_Doctor_Settings {
 			'duplicate_window_minutes' => array( 1, 1440 ),
 			'failed_order_threshold'   => array( 1, 10000 ),
 			'failed_order_multiplier'  => array( 1, 100 ),
+			'resolved_retention_days'  => array( 1, 3650 ),
 		);
 
 		foreach ( $int_fields as $key => $range ) {
-			$value         = isset( $input[ $key ] ) ? absint( $input[ $key ] ) : $defaults[ $key ];
+			$value         = isset( $input[ $key ] ) ? (int) $input[ $key ] : $defaults[ $key ];
 			$value         = max( $range[0], min( $range[1], $value ) );
 			$clean[ $key ] = $value;
 		}
@@ -183,7 +238,7 @@ class Woo_Order_Doctor_Settings {
 		$clean['email_daily_summary']         = self::sanitize_yes_no( $input, 'email_daily_summary' );
 
 		// Recipient mode: must be one of the known modes.
-		$mode = isset( $input['email_recipient_mode'] ) ? sanitize_key( wp_unslash( $input['email_recipient_mode'] ) ) : 'site_admin';
+		$mode                          = isset( $input['email_recipient_mode'] ) ? sanitize_key( wp_unslash( $input['email_recipient_mode'] ) ) : 'site_admin';
 		$clean['email_recipient_mode'] = in_array( $mode, self::recipient_modes(), true ) ? $mode : 'site_admin';
 
 		// Custom recipients: validate each line/comma entry with is_email; keep
@@ -210,8 +265,64 @@ class Woo_Order_Doctor_Settings {
 		);
 
 		// From name: plain text, fall back to default if emptied.
-		$from_name = isset( $input['email_from_name'] ) ? sanitize_text_field( wp_unslash( $input['email_from_name'] ) ) : '';
-		$clean['email_from_name'] = ( '' !== $from_name ) ? $from_name : 'Woo Order Doctor';
+		$from_name                = isset( $input['email_from_name'] ) ? sanitize_text_field( wp_unslash( $input['email_from_name'] ) ) : '';
+		$clean['email_from_name'] = ( '' !== $from_name ) ? $from_name : 'Order Health Doctor';
+
+		// --- Telegram channel ---------------------------------------------
+
+		$clean['telegram_enabled'] = self::sanitize_yes_no( $input, 'telegram_enabled' );
+
+		// Bot token: BotFather tokens look like "123456789:AAE...". Keep only the
+		// safe character set; store as-is otherwise (validated on send).
+		$token                       = isset( $input['telegram_bot_token'] ) ? trim( (string) wp_unslash( $input['telegram_bot_token'] ) ) : '';
+		$clean['telegram_bot_token'] = preg_replace( '/[^A-Za-z0-9:_-]/', '', $token );
+
+		// Chat id: numeric (may be negative for groups) or an @channelusername.
+		$chat_id                   = isset( $input['telegram_chat_id'] ) ? trim( (string) wp_unslash( $input['telegram_chat_id'] ) ) : '';
+		$clean['telegram_chat_id'] = preg_replace( '/[^A-Za-z0-9@_-]/', '', $chat_id );
+
+		// --- Per-rule config (enabled + severity) -------------------------
+
+		$clean['rules'] = self::sanitize_rules(
+			isset( $input['rules'] ) ? $input['rules'] : array()
+		);
+
+		return $clean;
+	}
+
+	/**
+	 * Sanitize the per-rule config array.
+	 *
+	 * Keeps only known severity slugs and yes/no enable flags, keyed by a
+	 * sanitized rule id. Unknown ids are harmless (the scanner only reads config
+	 * for rules that exist in the registry) but we still normalize the shape.
+	 *
+	 * @param mixed $raw Raw rules array from the form.
+	 * @return array
+	 */
+	private static function sanitize_rules( $raw ) {
+		if ( ! is_array( $raw ) ) {
+			return array();
+		}
+
+		$clean = array();
+		foreach ( $raw as $rule_id => $cfg ) {
+			$rule_id = sanitize_key( $rule_id );
+			if ( '' === $rule_id || ! is_array( $cfg ) ) {
+				continue;
+			}
+
+			$enabled  = ( isset( $cfg['enabled'] ) && 'yes' === $cfg['enabled'] ) ? 'yes' : 'no';
+			$severity = isset( $cfg['severity'] ) ? sanitize_key( wp_unslash( $cfg['severity'] ) ) : '';
+			if ( ! in_array( $severity, self::severity_slugs(), true ) ) {
+				$severity = 'info';
+			}
+
+			$clean[ $rule_id ] = array(
+				'enabled'  => $enabled,
+				'severity' => $severity,
+			);
+		}
 
 		return $clean;
 	}

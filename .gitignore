@@ -1,0 +1,6 @@
+/build/
+/.phpcs-cache
+/.phpcs-tmp/
+/.phpunit.result.cache
+/tools/*.phar
+/vendor/

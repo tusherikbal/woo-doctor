@@ -1,32 +1,372 @@
 /**
- * Woo Order Doctor admin styles.
+ * Order Health Doctor admin styles.
  *
  * Small layout tweaks layered on top of bundled Bootstrap. Scoped to the
  * plugin's own pages (assets are only enqueued there).
  */
 
 /* Give the Bootstrap container a little breathing room from the WP menu. */
-.wod-wrap {
+.ohd-wrap {
 	margin-right: 20px;
 }
 
 /* Keep the inline status-change forms from stacking; they sit in a flex row. */
-.wod-actions .wod-inline-form {
+.ohd-actions .ohd-inline-form {
 	display: inline-block;
 	margin: 0;
 }
 
 /* Tighten button spacing inside the actions cell. */
-.wod-actions .btn {
+.ohd-actions .btn {
 	margin-bottom: 2px;
 }
 
 /* WordPress resets can shrink Bootstrap form controls; restore readability. */
-.wod-wrap .form-text {
+.ohd-wrap .form-text {
 	font-size: 12px;
 }
 
 /* Make cards visually distinct against the grey wp-admin background. */
-.wod-wrap .card {
+.ohd-wrap .card {
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------------------------------------------------------------------------
+ * Dynamic UI: health gauge, sparkline, toasts, spinner, row transitions.
+ * ------------------------------------------------------------------------- */
+
+/* Animated circular health gauge. */
+.ohd-gauge {
+	display: inline-block;
+	line-height: 0;
+	margin: 4px 0 8px;
+}
+.ohd-gauge-track {
+	fill: none;
+	stroke: #e9ecef;
+	stroke-width: 12;
+}
+.ohd-gauge-fill {
+	fill: none;
+	stroke-width: 12;
+	transition: stroke 0.3s ease;
+}
+.ohd-gauge-num {
+	font-size: 30px;
+	font-weight: 700;
+	fill: #1d2327;
+}
+
+/* Trend sparkline. */
+.ohd-sparkline {
+	display: block;
+	overflow: visible;
+}
+
+/* Scan button loading state (small spinner before the label). */
+#ohd-scan-btn.is-loading .ohd-scan-label::before {
+	content: "";
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-right: 6px;
+	vertical-align: -1px;
+	border: 2px solid rgba(255, 255, 255, 0.5);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: ohd-spin 0.7s linear infinite;
+}
+@keyframes ohd-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Fade a row out when it leaves the current filter after a status change. */
+.ohd-row-leaving {
+	transition: opacity 0.3s ease, background-color 0.3s ease;
+	opacity: 0;
+	background-color: #f6f7f7;
+}
+
+/* Toast stack (fixed, bottom-right). */
+.ohd-toasts {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 100000;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 340px;
+}
+.ohd-toast {
+	padding: 10px 14px;
+	border-radius: 6px;
+	color: #fff;
+	font-size: 13px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.ohd-toast.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+.ohd-toast--success {
+	background: #198754;
+}
+.ohd-toast--error {
+	background: #dc3545;
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+	.ohd-gauge-fill,
+	.ohd-toast,
+	.ohd-row-leaving {
+		transition: none;
+	}
+	#ohd-scan-btn.is-loading .ohd-scan-label::before {
+		animation: none;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Layout polish — make the Bootstrap layer sit cleanly inside wp-admin.
+ * ------------------------------------------------------------------------- */
+
+.ohd-wrap {
+	max-width: 1320px;
+}
+
+.ohd-wrap .card {
+	border-color: #e2e4e7;
+	max-width: none;
+}
+.ohd-wrap .card-header {
+	background: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+ * Form controls — neutralize higher-specificity wp-admin form rules so the
+ * bundled Bootstrap controls render consistently on plugin screens.
+ * ------------------------------------------------------------------------- */
+
+.ohd-wrap input.form-control,
+.ohd-wrap textarea.form-control {
+	max-width: none;
+	min-height: calc(1.5em + 0.75rem + 2px);
+	margin: 0;
+	padding: 0.375rem 0.75rem;
+	line-height: 1.5;
+	color: var(--bs-body-color);
+	background-color: var(--bs-body-bg);
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	border-radius: 0.375rem;
+}
+
+.ohd-wrap select.form-select {
+	max-width: none;
+	min-height: calc(1.5em + 0.75rem + 2px);
+	margin: 0;
+	padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+	line-height: 1.5;
+	color: var(--bs-body-color);
+	background-color: var(--bs-body-bg);
+	background-image: var(--bs-form-select-bg-img), var(--bs-form-select-bg-icon, none);
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	border-radius: 0.375rem;
+	background-position: right 0.75rem center;
+}
+
+.ohd-wrap select.form-select.form-select-sm {
+	min-height: calc(1.5em + 0.5rem + 2px);
+	padding: 0.25rem 2rem 0.25rem 0.5rem;
+	font-size: 0.875rem;
+	border-radius: 0.25rem;
+	background-position: right 0.5rem center;
+}
+
+.ohd-wrap select.form-select[multiple] {
+	height: auto;
+	padding-right: 0.75rem;
+	background-image: none;
+}
+
+.ohd-wrap input.form-control:focus,
+.ohd-wrap textarea.form-control:focus,
+.ohd-wrap select.form-select:focus {
+	color: var(--bs-body-color);
+	background-color: var(--bs-body-bg);
+	border-color: #86b7fe;
+	outline: 0;
+	box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.ohd-wrap input.form-control:disabled,
+.ohd-wrap textarea.form-control:disabled,
+.ohd-wrap select.form-select:disabled {
+	background-color: var(--bs-secondary-bg);
+	opacity: 1;
+}
+
+.ohd-wrap .form-check-input[type="checkbox"] {
+	min-width: 1em;
+	width: 1em;
+	height: 1em;
+	margin-top: 0.25em;
+	border-radius: 0.25em;
+}
+
+.ohd-wrap .form-check-input[type="checkbox"]:checked {
+	background-color: #0d6efd;
+	border-color: #0d6efd;
+	background-image: var(--bs-form-check-bg-image);
+}
+
+/* WordPress injects a Dashicon tick through this pseudo-element. Bootstrap
+ * already supplies the appropriate checkbox or switch background image. */
+.ohd-wrap .form-check-input[type="checkbox"]:checked::before {
+	content: none;
+	display: none;
+}
+
+.ohd-wrap .form-switch .form-check-input[type="checkbox"] {
+	width: 2em;
+	min-width: 2em;
+	height: 1em;
+	margin-top: 0.25em;
+	margin-left: -2.5em;
+	border-radius: 2em;
+	background-image: var(--bs-form-switch-bg);
+	background-position: left center;
+}
+
+.ohd-wrap .form-switch .form-check-input[type="checkbox"]:checked {
+	background-image: var(--bs-form-switch-bg);
+	background-position: right center;
+}
+
+.ohd-wrap .form-check-input:focus {
+	border-color: #86b7fe;
+	outline: 0;
+	box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.ohd-wrap .form-check-input:disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+/* Without JavaScript every settings section remains visible and usable. */
+.ohd-settings-nav:not(.ohd-tabs-ready) {
+	display: none;
+}
+.ohd-settings-tabs:not(.ohd-tabs-ready) .tab-pane {
+	display: block;
+	opacity: 1;
+}
+.ohd-settings-tabs:not(.ohd-tabs-ready) .tab-pane + .tab-pane {
+	margin-top: 1rem;
+}
+
+@media (max-width: 575.98px) {
+	.ohd-settings-toolbar {
+		align-items: stretch !important;
+	}
+	.ohd-settings-toolbar .ohd-settings-nav {
+		flex-basis: 100%;
+		overflow-x: auto;
+	}
+	.ohd-settings-toolbar > .btn {
+		margin-left: auto;
+	}
+	.ohd-settings-nav .nav-link {
+		padding-right: 0.75rem;
+		padding-left: 0.75rem;
+	}
+}
+
+/* Filter bar: a single flexible row that never wraps its button vertically. */
+.ohd-filter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+}
+.ohd-filter-field {
+	flex: 1 1 160px;
+	min-width: 140px;
+}
+.ohd-filter-field .form-label {
+	margin-bottom: 2px;
+	white-space: nowrap;
+}
+.ohd-filter-actions {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding-bottom: 1px;
+}
+
+/* Issues table: give each column a sensible share so the Issue text can breathe. */
+#ohd-issues-table {
+	table-layout: fixed;
+	width: 100%;
+}
+#ohd-issues-table th,
+#ohd-issues-table td {
+	padding: 8px 10px;
+	vertical-align: top;
+	word-break: break-word;
+}
+#ohd-issues-table .ohd-col-check   { width: 34px; }
+#ohd-issues-table .ohd-col-sev     { width: 92px; }
+#ohd-issues-table .ohd-col-issue   { width: auto; }
+#ohd-issues-table .ohd-col-obj     { width: 110px; }
+#ohd-issues-table .ohd-col-date    { width: 120px; }
+#ohd-issues-table .ohd-col-status  { width: 80px; }
+#ohd-issues-table .ohd-col-actions { width: 180px; }
+
+/* Never let the table crush below a readable width — scroll instead. */
+#ohd-issues-table {
+	min-width: 820px;
+}
+
+/* Compact, tidy action buttons: a "go to" row above the status-change row. */
+.ohd-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.ohd-actions-goto,
+.ohd-actions-status {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+.ohd-actions .ohd-inline-form {
+	display: inline-block;
+	margin: 0;
+}
+.ohd-actions .btn {
+	font-size: 11px;
+	line-height: 1.4;
+	padding: 2px 8px;
+	white-space: nowrap;
+}
+
+/* Dashboard recent-issues table: match the tidy spacing. */
+#ohd-recent-body td {
+	padding: 8px 12px;
+	vertical-align: top;
+}
+
+/* Slightly denser default Bootstrap tables inside the plugin. */
+.ohd-wrap .table > :not(caption) > * > * {
+	padding-top: 0.6rem;
+	padding-bottom: 0.6rem;
 }

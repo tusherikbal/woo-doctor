@@ -2,7 +2,7 @@
 /**
  * Dependency checker.
  *
- * @package Woo_Order_Doctor
+ * @package Order_Health_Doctor
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Woo_Order_Doctor_Dependency
+ * Class Order_Health_Doctor_Dependency
  *
  * Small helper that answers a single question: is WooCommerce active and
  * usable? The whole plugin keys off this so we never fatal error when
  * WooCommerce is missing.
  */
-class Woo_Order_Doctor_Dependency {
+class Order_Health_Doctor_Dependency {
 
 	/**
 	 * Check whether WooCommerce is active and loaded.
